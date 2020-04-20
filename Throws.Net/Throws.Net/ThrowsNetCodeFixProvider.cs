@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -56,6 +57,8 @@ namespace Throws.Net
 
         Task<Document> AddThrows(Document document, Diagnostic diagnostic, SyntaxNode root)
         {
+            throw new Exception("Break For me!!!");
+
             var statement = root.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<StatementSyntax>();
             var method = (MethodDeclarationSyntax)GetMethod(statement);
 

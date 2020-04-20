@@ -7,6 +7,61 @@ using TestHelper;
 namespace Throws.Net.Test
 {
     [TestClass]
+    public class ThrowsNetAnalyzerTests 
+    {
+        [TestMethod]
+        public void Method_Cannot_Just_Throw()
+        {
+            var test = @"
+using System;
+using Throws.Net;
+
+namespace CSharp_Standard_Sample
+{
+    public class Class1
+    {
+        public void Sample_None(bool flag, int value)
+        {
+            throw new Exception(""Test"");
+        }
+    }
+}
+";
+
+            var expected = new DiagnosticResult
+            {
+                Id = "ThrowsNet",
+                Message = "Throws or catch expected",
+                Severity = DiagnosticSeverity.Warning,
+                Locations = new[] {new DiagnosticResultLocation("Test0.cs", 11, 13)}
+            };
+            // VerifyCSharpDiagnostic(test, expected);
+        }
+
+        [TestMethod]
+        public void Method_Should_be_marked_as_Throws()
+        {
+            var test = @"
+using System;
+using Throws.Net;
+
+namespace Samples
+{
+    public class Class1
+    {
+        [Throws(typeof(Exception))]
+        public void Sample()
+        {
+            throw new Exception(""Test"");
+        }
+    }
+}
+";
+            // VerifyCSharpDiagnostic(test);
+        }
+    }
+
+    [TestClass]
     public class UnitTest : CodeFixVerifier
     {
         //No diagnostics expected to show up

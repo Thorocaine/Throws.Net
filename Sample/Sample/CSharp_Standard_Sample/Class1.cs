@@ -23,7 +23,7 @@ namespace CSharp_Standard_Sample
             {
                 throw new Exception("Test");
             }
-            catch (Exception ex)
+            catch (AccessViolationException ex)
             {
                 Console.WriteLine(ex);
             }

@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Throws.Net;
 
 namespace TestHelper
 {
@@ -81,7 +82,7 @@ namespace TestHelper
         /// <summary>
         ///     Get the CSharp analyzer being tested - to be implemented in non-abstract class
         /// </summary>
-        protected virtual DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => null;
+        protected virtual DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new ThrowsNetAnalyzer();
 
         /// <summary>
         ///     Get the Visual Basic analyzer being tested (C#) - to be implemented in non-abstract class

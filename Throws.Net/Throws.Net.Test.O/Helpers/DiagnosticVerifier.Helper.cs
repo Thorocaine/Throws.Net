@@ -63,8 +63,12 @@ namespace TestHelper
             Document[] documents)
         {
             var projects = new HashSet<Project>();
-            foreach (var document in documents) projects.Add(document.Project);
 
+            foreach (var document in documents)
+            {
+                projects.Add(document.Project);
+            }
+            
             var diagnostics = new List<Diagnostic>();
             foreach (var project in projects)
             {
