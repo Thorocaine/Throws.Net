@@ -5,13 +5,15 @@ namespace CSharp_Standard_Sample
 {
     public class Class1
     {
-        public void Sample_None(bool flag, int value)
+        [Throws(typeof(ArgumentNullException))]
+        public int Sample_None(bool flag, int value)
         {
-            throw new Exception("Test");
+            var bob = Sample_Throws(flag, value);
+            return bob;
         }
 
-        [Throws(typeof(Exception))]
-        public void Sample_Throws(bool flag, int value)
+        [Throws(typeof(ArgumentException))]
+        public int Sample_Throws(bool flag, int value)
         {
             throw new ArgumentException("Test");
 

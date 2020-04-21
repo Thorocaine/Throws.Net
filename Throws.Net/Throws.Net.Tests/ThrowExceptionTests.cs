@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Microsoft.CodeAnalysis.CodeRefactorings;
 using Xunit;
 
 namespace Throws.Net.Tests

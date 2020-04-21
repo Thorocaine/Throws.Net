@@ -55,21 +55,18 @@ namespace Throws.Net
                 diagnostic);
         }
 
-        Task<Document> AddThrows(Document document, Diagnostic diagnostic, SyntaxNode root)
+        static Task<Document> AddThrows(Document document, Diagnostic diagnostic, SyntaxNode root)
         {
-            throw new Exception("Break For me!!!");
+            var method = root.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<MethodDeclarationSyntax>();
+            
+            var name = SyntaxFactory.ParseName("Throws");
+            var arguments = SyntaxFactory.ParseAttributeArgumentList("(typeof(Exception))");
+            var attribute = SyntaxFactory.Attribute(name, arguments);
+            var attributeList = new SeparatedSyntaxList<AttributeSyntax>().Add(attribute);
+            var list = SyntaxFactory.AttributeList(attributeList);
 
-            var statement = root.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<StatementSyntax>();
-            var method = (MethodDeclarationSyntax)GetMethod(statement);
-
-            // var children = method.Body; //?? SyntaxFactory.Block(SyntaxFactory.ReturnStatement(method.ExpressionBody));
-
-            // var block = SyntaxFactory.Block(new SyntaxList<SyntaxNode>(method.Body));
-            var catchBlock = default(SyntaxList<CatchClauseSyntax>);
-            var tryCatch = SyntaxFactory.TryStatement(method.Body, catchBlock, default);
-
-            var newRoot = root.ReplaceNode(method.Body, SyntaxFactory.Block( tryCatch));
-
+            var newMethod = method.AddAttributeLists(list);
+            var newRoot = root.ReplaceNode(method, newMethod);
 
             return Task.FromResult(document.WithSyntaxRoot(newRoot));
         }

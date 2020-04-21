@@ -10,7 +10,7 @@ namespace Throws.Net.Tests
         protected override string LanguageName => LanguageNames.CSharp;
         protected override DiagnosticAnalyzer CreateAnalyzer() => new ThrowsNetAnalyzer();
 
-        protected string Id => ThrowsNetAnalyzer.DiagnosticId;
+        protected static string Id => ThrowsNetAnalyzer.DiagnosticId;
 
         protected override IReadOnlyCollection<MetadataReference> References => new[]
         {
