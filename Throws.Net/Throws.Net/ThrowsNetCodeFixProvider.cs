@@ -53,8 +53,35 @@ namespace Throws.Net
                     c => AddThrows(context.Document, diagnostic, root),
                     "Add Throws"),
                 diagnostic);
+            
+            context.RegisterCodeFix(
+                CodeAction.Create(
+                    "Add Try Catch",
+                    c => AddTryCatch(context.Document, diagnostic, root),
+                    "Add Try Catch"),
+                diagnostic);
         }
 
+        static Task<Document> AddTryCatch(Document document, Diagnostic diagnostic, SyntaxNode root)
+        {
+            var methodBody = root.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<MethodDeclarationSyntax>().Body;
+
+            var exception = diagnostic.Properties.ContainsKey("Exception")
+                ? diagnostic.Properties["Exception"]
+                : "Exception";
+
+            var catchBlock = SyntaxFactory.CatchClause(
+                SyntaxFactory.CatchDeclaration((TypeSyntax) SyntaxFactory.ParseTypeName($"{exception} ex")), null, SyntaxFactory.Block()
+            ); 
+               
+            var catchList = SyntaxFactory.List(new[] {catchBlock});
+            var tryBlock = SyntaxFactory.TryStatement(methodBody, catchList, default);
+            
+            var newRoot = root.ReplaceNode(methodBody, SyntaxFactory.Block(tryBlock));
+
+            return Task.FromResult(document.WithSyntaxRoot(newRoot));
+        }
+        
         static Task<Document> AddThrows(Document document, Diagnostic diagnostic, SyntaxNode root)
         {
             var method = root.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<MethodDeclarationSyntax>();

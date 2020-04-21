@@ -36,6 +36,18 @@ namespace Throws.Net.Tests
                 .Replace("|]", "");
             this.TestCodeFix(code, fixedCode, ThrowsNetAnalyzer.DiagnosticId, 0);
         }
+        
+        [Theory]
+        [MemberData(nameof(TestData.GetSampleExceptions), MemberType = typeof(TestData))]
+        public void Fix_adds_a_Try_Catch(string exception)
+        {
+            var code = CodeSamples.GetInvocationOfThrowsMethod(exception);
+            var fixedCode = CodeSamples.GetInvocationOfThrowsMethod(exception, myCatch: exception)
+                .Replace("[|", "")
+                .Replace("|]", "");
+            TestCodeFix(code, fixedCode, ThrowsNetAnalyzer.DiagnosticId, 1);
+        }
+        
 
 
 
