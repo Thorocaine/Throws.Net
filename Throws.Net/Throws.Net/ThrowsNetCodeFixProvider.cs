@@ -58,9 +58,13 @@ namespace Throws.Net
         static Task<Document> AddThrows(Document document, Diagnostic diagnostic, SyntaxNode root)
         {
             var method = root.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<MethodDeclarationSyntax>();
+
+            var exception = diagnostic.Properties.ContainsKey("Exception")
+                ? diagnostic.Properties["Exception"]
+                : "Exception"; 
             
             var name = SyntaxFactory.ParseName("Throws");
-            var arguments = SyntaxFactory.ParseAttributeArgumentList("(typeof(Exception))");
+            var arguments = SyntaxFactory.ParseAttributeArgumentList($"(typeof({exception}))");
             var attribute = SyntaxFactory.Attribute(name, arguments);
             var attributeList = new SeparatedSyntaxList<AttributeSyntax>().Add(attribute);
             var list = SyntaxFactory.AttributeList(attributeList);

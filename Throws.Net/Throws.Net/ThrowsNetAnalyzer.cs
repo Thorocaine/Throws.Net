@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -68,18 +70,29 @@ namespace Throws.Net
             if (!(syntax is MethodDeclarationSyntax methodDeclaration)) return;
             var container = helper.GetRelevantContainer(invocation);
             if (container is null) return;
-            if(helper.GetThrowsTypes(methodDeclaration).Any(IsCaughtBy(helper, container))) return;
-                  
-            var diagnostic = Diagnostic.Create(Rule, invocation.GetLocation());
+            var types = helper.GetThrowsTypes(methodDeclaration).ToArray();
+            
+            var uncaught = types
+                .Where(IsNotCaughtBy(helper, container))
+                .FirstOrDefault();
+            if (uncaught is null) return;
+
+            var dic = ImmutableDictionary.Create<string, string>().Add("Exception", uncaught.Name);
+            var diagnostic = Diagnostic.Create(Rule, invocation.GetLocation(), properties: dic);
             context.ReportDiagnostic(diagnostic);
         }
 
-        static Func<ITypeSymbol?, bool> IsCaughtBy(TypeHelpers helper, SyntaxNode container)
-            => (exceptionType) => container switch
+        static Func<ITypeSymbol?, bool> IsNotCaughtBy(TypeHelpers helper, SyntaxNode container)
+            => (exceptionType) =>
             {
-                TryStatementSyntax ts when helper.DoesCatch(ts, exceptionType) => true,
-                MethodDeclarationSyntax md when helper.HasThrowsAttribute(md, exceptionType) => true,
-                _ => false
+                var ressy = container switch
+                {
+                    TryStatementSyntax ts when helper.DoesCatch(ts, exceptionType) => false,
+                    MethodDeclarationSyntax md when helper.HasThrowsAttribute(md, exceptionType) =>
+                    false,
+                    _ => true
+                };
+                return ressy;
             };
 
         static void AnalyzeThrow(SyntaxNodeAnalysisContext context)
@@ -89,18 +102,16 @@ namespace Throws.Net
 
             var exceptionType = helper.GetType(throwStatement.ChildNodes().FirstOrDefault());
             var container = helper.GetRelevantContainer(throwStatement);
-            switch (container)
+            
+            if (container == null || !IsNotCaughtBy(helper, container)(exceptionType)) return;
+            
+            var dic = new ReadOnlyDictionary<string,string> (new Dictionary<string, string>
             {
-                case TryStatementSyntax ts when helper.DoesCatch(ts, exceptionType):
-                case MethodDeclarationSyntax md when helper.HasThrowsAttribute(md, exceptionType):
-                    return;
-                default:
-                {
-                    var diagnostic = Diagnostic.Create(Rule, throwStatement.GetLocation());
-                    context.ReportDiagnostic(diagnostic);
-                    break;
-                }
-            }
+                ["Exception"] = exceptionType?.Name ?? "Exception"
+            });            
+            var diagnostic = Diagnostic.Create(Rule, throwStatement.GetLocation(), dic);
+            context.ReportDiagnostic(diagnostic);
+            
         }
     }
 }

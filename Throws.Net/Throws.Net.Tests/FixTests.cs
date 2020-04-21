@@ -68,7 +68,7 @@ namespace CSharp_Standard_Sample
             {catchCode}
         }}
 
-        [Throws(typeof(${exception}))]        
+        [Throws(typeof({exception}))]        
         void DangerZone() {{}}
     }}
 }}

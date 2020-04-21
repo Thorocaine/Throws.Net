@@ -10,24 +10,7 @@ namespace Throws.Net.Tests
         [MemberData(nameof(TestData.GetSampleExceptions), MemberType = typeof(TestData))]
         public void Diagnostic_when_calling_throws_method(string exception)
         {
-            var code = @$"
-using System;
-using Throws.Net;
-
-namespace CSharp_Standard_Sample
-{{
-    public class Class1
-    {{
-        public void Test()
-        {{
-            [|DangerZone()|];
-        }}
-
-        [Throws(typeof(${exception}))]        
-        void DangerZone() {{}}
-    }}
-}}
-";
+            var code = CodeSamples.GetInvocationOfThrowsMethod(exception);
             HasDiagnostic(code, Id);
         }
 
