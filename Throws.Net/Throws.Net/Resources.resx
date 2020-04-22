@@ -129,4 +129,16 @@
     <value>Throws or catch</value>
     <comment>The title of the diagnostic.</comment>
   </data>
+  <data name="OverrideAnalyzerDescription" xml:space="preserve">
+    <value>An override method cannot throw a type that is not thrown by it's base method</value>
+    <comment>An optional longer localizable description of the diagnostic.</comment>
+  </data>
+  <data name="OverrideAnalyzerMessageFormat" xml:space="preserve">
+    <value>Cannot Throws a type not thrown by the base type</value>
+    <comment>The format-able message the diagnostic displays.</comment>
+  </data>
+  <data name="OverrideAnalyzerTitle" xml:space="preserve">
+    <value>Cannot throw</value>
+    <comment>The title of the diagnostic.</comment>
+  </data>
 </root>

@@ -51,39 +51,4 @@ namespace Throws.Net.Tests
         
         
     }
-
-   internal static class CodeSamples
-   {
-       
-        public static string GetInvocationOfThrowsMethod(string exception, string? myThrows= null, string? myCatch = null)
-        {
-            var attributeCode = string.IsNullOrEmpty(myThrows) ? null : $"[Throws(typeof({myThrows}))]";
-            var (tryCode, catchCode) = string.IsNullOrEmpty(myCatch)
-                ? ("", "")
-                : (
-                    "try\r\n            {\r\n            ",
-                    $"\r\n        }}\r\n            catch ({myCatch} ex)\r\n            {{\r\n            }}"
-                    );
-            var code = @$"
-using System;
-using Throws.Net;
-
-namespace CSharp_Standard_Sample
-{{
-    public class Class1
-    {{
-        {attributeCode}
-        public void Test()
-        {{
-            {tryCode}[|DangerZone()|];{catchCode}
-        }}
-
-        [Throws(typeof({exception}))]        
-        void DangerZone() {{}}
-    }}
-}}
-";
-            return code;
-        }
-    }
 }

@@ -3,8 +3,24 @@ using Throws.Net;
 
 namespace CSharp_Standard_Sample
 {
-    public class Class1
+    public abstract class ClassB {
+        [Throws(typeof(Exception))]
+        public abstract void MyTest();
+    }
+
+    public class Class1 : ClassB
     {
+        
+        public override void MyTest()
+        {
+            
+        }
+
+        public void InhertitedTest()
+        {
+            MyTest();
+        }
+
         [Throws(typeof(ArgumentNullException))]
         public int Sample_None(bool flag, int value)
         {

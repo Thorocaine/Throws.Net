@@ -87,5 +87,32 @@ namespace Throws.Net {
                 return ResourceManager.GetString("AnalyzerTitle", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An override method cannot throw a type that is not thrown by it&apos;s base method.
+        /// </summary>
+        internal static string OverrideAnalyzerDescription {
+            get {
+                return ResourceManager.GetString("OverrideAnalyzerDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot Throws a type not thrown by the base type.
+        /// </summary>
+        internal static string OverrideAnalyzerMessageFormat {
+            get {
+                return ResourceManager.GetString("OverrideAnalyzerMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot throw.
+        /// </summary>
+        internal static string OverrideAnalyzerTitle {
+            get {
+                return ResourceManager.GetString("OverrideAnalyzerTitle", resourceCulture);
+            }
+        }
     }
 }

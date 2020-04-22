@@ -17,6 +17,14 @@ namespace Throws.Net.Helpers
         public ISymbol ThrowsType
             => _context.Compilation.GetTypeByMetadataName("Throws.Net.ThrowsAttribute");
 
+        public IEnumerable<SyntaxNode> GetThrows(MethodDeclarationSyntax methodDeclaration)
+            => methodDeclaration.AttributeLists
+                .SelectMany(x => x.Attributes)
+                .Select(x => x.ChildNodes().ToArray())
+                .Where(x => x.Length == 2)
+                .Where(x => IsType(x[0], ThrowsType))
+                .Select(x => x[0].Parent);
+
         public IEnumerable<ITypeSymbol?> GetThrowsTypes(MethodDeclarationSyntax methodDeclaration)
             => methodDeclaration.AttributeLists.SelectMany(x => x.Attributes)
                 .Select(x => x.ChildNodes().ToArray())
@@ -32,16 +40,6 @@ namespace Throws.Net.Helpers
             MethodDeclarationSyntax methodDeclaration,
             ITypeSymbol? exceptionType)
             =>
-                // methodDeclaration.AttributeLists
-                // .SelectMany(x => x.Attributes)
-                // .Select(x => x.ChildNodes().ToArray())
-                // .Where(x => x.Length == 2)
-                // .Where(x => IsType(x[0], ThrowsType))
-                // .Select(x => x[1] as AttributeArgumentListSyntax)
-                // .Select(x => x?.Arguments.FirstOrDefault()?.Expression as TypeOfExpressionSyntax)
-                // .Select(x => x?.Type)
-                // .Where(x => x != null)
-                // .Select(GetType)
                 GetThrowsTypes(methodDeclaration).Any(x => DoesInherit(exceptionType, x));
 
         public ITypeSymbol? GetType(SyntaxNode? node)
