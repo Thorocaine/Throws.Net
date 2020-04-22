@@ -45,13 +45,10 @@ namespace Throws.Net.Tests
             var fixedCode = CodeSamples.GetInvocationOfThrowsMethod(exception, myCatch: exception)
                 .Replace("[|", "")
                 .Replace("|]", "");
+            
             TestCodeFix(code, fixedCode, ThrowsNetAnalyzer.DiagnosticId, 1);
         }
         
-
-
-
-
         
     }
 
@@ -62,8 +59,11 @@ namespace Throws.Net.Tests
         {
             var attributeCode = string.IsNullOrEmpty(myThrows) ? null : $"[Throws(typeof({myThrows}))]";
             var (tryCode, catchCode) = string.IsNullOrEmpty(myCatch)
-                ? ((string?, string?))(null, null)
-                : ("try {", $"catch({myCatch} ex) {{}}");
+                ? ("", "")
+                : (
+                    "try\r\n            {\r\n            ",
+                    $"\r\n        }}\r\n            catch ({myCatch} ex)\r\n            {{\r\n            }}"
+                    );
             var code = @$"
 using System;
 using Throws.Net;
@@ -75,9 +75,7 @@ namespace CSharp_Standard_Sample
         {attributeCode}
         public void Test()
         {{
-            {tryCode}
-            [|DangerZone()|];
-            {catchCode}
+            {tryCode}[|DangerZone()|];{catchCode}
         }}
 
         [Throws(typeof({exception}))]        
