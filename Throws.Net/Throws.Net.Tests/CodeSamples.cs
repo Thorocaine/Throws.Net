@@ -42,6 +42,34 @@ namespace CSharp_Standard_Sample
             return code;
         }
         
+       public static string CreateInterfaceMethod(string? baseThrows = null, string? myThrows = null)
+       {
+           var baseAttribute = string.IsNullOrEmpty(baseThrows) ? "" : $"[Throws(typeof({baseThrows}))]";
+           var myAttribute = string.IsNullOrEmpty(myThrows) ? "" : $"[Throws(typeof({myThrows}))]";
+        
+           return @$"
+using System;
+using Throws.Net;
+
+namespace CSharp_Standard_Sample
+{{
+    public interface IClassA
+    {{
+        {baseAttribute}
+        void Test();
+    }}
+    
+    public class ClassA: IClassA
+    {{
+        [|{myAttribute}
+        public void Test()
+        {{
+        }}|]
+    }}
+}}
+        ";        
+       }  
+
        public static string CreateOverrideMethod(string? baseThrows = null, string? myThrows = null)
        {
         var baseAttribute = string.IsNullOrEmpty(baseThrows) ? "" : $"[Throws(typeof({baseThrows}))]";

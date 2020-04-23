@@ -11,49 +11,6 @@ using Throws.Net.Helpers;
 
 namespace Throws.Net
 {
-    static class Rules
-    {
-        const string Category = "Usage";
-
-        static LocalizableResourceString GetString(string resourcesName)
-        {
-            var manager = Resources.ResourceManager;
-            return new LocalizableResourceString(resourcesName, manager, typeof(Resources));
-        }
-
-        public static DiagnosticDescriptor CreateRule()
-        {
-            var title = GetString(nameof(Resources.AnalyzerTitle));
-            var messageFormat = GetString(nameof(Resources.AnalyzerMessageFormat));
-            var description = GetString(nameof(Resources.AnalyzerDescription));
-
-            return new DiagnosticDescriptor(
-                ThrowsNetAnalyzer.DiagnosticId,
-                title,
-                messageFormat,
-                Category,
-                DiagnosticSeverity.Error,
-                true,
-                description);
-        }
-
-        public static DiagnosticDescriptor CreateOverrideRule()
-        {
-            var title = GetString(nameof(Resources.OverrideAnalyzerTitle));
-            var messageFormat = GetString(nameof(Resources.OverrideAnalyzerMessageFormat));
-            var description = GetString(nameof(Resources.OverrideAnalyzerDescription));
-
-            return new DiagnosticDescriptor(
-                ThrowsNetAnalyzer.DiagnosticId,
-                title,
-                messageFormat,
-                Category,
-                DiagnosticSeverity.Error,
-                true,
-                description);
-        }
-    }
-
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class ThrowsNetAnalyzer : DiagnosticAnalyzer
     {
@@ -72,21 +29,34 @@ namespace Throws.Net
             context.RegisterSyntaxNodeAction(AnalyzeThrow, SyntaxKind.ThrowStatement);
             context.RegisterSyntaxNodeAction(AnalyzeInvocation, SyntaxKind.InvocationExpression);
             context.RegisterSyntaxNodeAction(AnalyzeOverride, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(AnalyzeFromInterface, SyntaxKind.MethodDeclaration);
         }
 
-        static void AnalyzeOverride(SyntaxNodeAnalysisContext context)
+        static void AnalyzeFromInterface(SyntaxNodeAnalysisContext context)
         {
             if (!(context.Node is MethodDeclarationSyntax method)) return;
-            if(method.Modifiers.All(x => x.Text != "override")) return;
-
             var symbol = context.SemanticModel.GetDeclaredSymbol(method, context.CancellationToken);
-            if (!symbol.IsOverride) return;
 
-            var location = method.GetLocation().SourceSpan.Start;
-            var bm = context.SemanticModel.LookupBaseMembers(location);
 
+            var baseMembers = symbol.ContainingType.Interfaces
+                .SelectMany(x => x.GetMembers(symbol.Name))
+                .Where(x => symbol.ContainingType.FindImplementationForInterfaceMember(x).Equals(symbol))
+                .ToArray()
+                ;
+            
+            if (!baseMembers.Any()) return;
+            
+            AnalyzeBaseMembers(context, method, baseMembers);
+           
+               
+            
+        }
+
+
+        static void AnalyzeBaseMembers(SyntaxNodeAnalysisContext context, MethodDeclarationSyntax method,  IEnumerable<ISymbol> baseMembers)
+        {
             var helper = new TypeHelpers(context);
-            var baseThrows = bm.ToArray()
+            var baseThrows = baseMembers
                 .SelectMany(x => x.DeclaringSyntaxReferences)
                 .Where(x => x != null)
                 .Select(x => x.GetSyntax(context.CancellationToken))
@@ -116,7 +86,21 @@ namespace Throws.Net
                 var diagnostic = Diagnostic.Create(Rule, method.GetLocation(), properties: dic);
                 context.ReportDiagnostic(diagnostic);
             }
-               
+        }
+
+        static void AnalyzeOverride(SyntaxNodeAnalysisContext context)
+        {
+            if (!(context.Node is MethodDeclarationSyntax method)) return;
+            if(method.Modifiers.All(x => x.Text != "override")) return;
+
+            // var symbol = context.SemanticModel.GetDeclaredSymbol(method, context.CancellationToken);
+            // if (!symbol.IsOverride) return;
+
+            var location = method.GetLocation().SourceSpan.Start;
+            var baseMembers = context.SemanticModel.LookupBaseMembers(location).ToArray();
+            if (!baseMembers.Any()) return;
+            AnalyzeBaseMembers(context, method, baseMembers);
+
             
         }
 
@@ -178,5 +162,7 @@ namespace Throws.Net
             context.ReportDiagnostic(diagnostic);
             
         }
+
+
     }
 }
