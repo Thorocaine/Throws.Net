@@ -12,9 +12,9 @@
     <PackageId>Throws.Net</PackageId>
     <PackageVersion>0.1.0.0</PackageVersion>
     <Authors>Jonathan Peel</Authors>
-    <PackageLicenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</PackageLicenseUrl>
+    <PackageLicenseUrl>https://github.com/Thorocaine/Throws.Net/raw/master/LICENCE.md</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/Thorocaine/Throws.Net</PackageProjectUrl>
-    <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl>
+    <PackageIconUrl>https://github.com/Thorocaine/Throws.Net/raw/master/icon.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/Thorocaine/Throws.Net</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>Throws.Net</Description>
