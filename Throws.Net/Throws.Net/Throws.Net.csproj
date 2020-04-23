@@ -10,17 +10,17 @@
 
   <PropertyGroup>
     <PackageId>Throws.Net</PackageId>
-    <PackageVersion>1.0.0.0</PackageVersion>
-    <Authors>me</Authors>
+    <PackageVersion>0.1.0.0</PackageVersion>
+    <Authors>Jonathan Peel</Authors>
     <PackageLicenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</PackageLicenseUrl>
-    <PackageProjectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Thorocaine/Throws.Net</PackageProjectUrl>
     <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl>
-    <RepositoryUrl>http://REPOSITORY_URL_HERE_OR_DELETE_THIS_LINE</RepositoryUrl>
+    <RepositoryUrl>https://github.com/Thorocaine/Throws.Net</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>Throws.Net</Description>
-    <PackageReleaseNotes>Summary of changes made in this release of the package.</PackageReleaseNotes>
-    <Copyright>Copyright</Copyright>
-    <PackageTags>Throws.Net, analyzers</PackageTags>
+    <PackageReleaseNotes>Beta Release</PackageReleaseNotes>
+    <Copyright>Copyright 2020 Jonathan Peel</Copyright>
+    <PackageTags>Throws.Net, analyzers, LSP</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
   </PropertyGroup>
 
